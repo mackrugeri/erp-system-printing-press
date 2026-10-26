@@ -1,0 +1,37 @@
+<tr class="nested-fields group bg-white">
+  <%# 1. DEBIT SIDE (IN) %>
+  <td class="px-4 py-6 align-top">
+    <%= f.collection_select :debit_account_id, Account.all.order(:name), :id, :name, 
+        { prompt: "Select Destination Account" }, 
+        { class: "block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-blue-50/10" } %>
+    <p class="mt-1 text-[10px] text-blue-500 font-medium italic">Money will be added to this account</p>
+  </td>
+
+  <%# 2. SHARED AMOUNT %>
+  <td class="px-4 py-6 align-top">
+    <div class="relative">
+      <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+        <span class="text-gray-400 sm:text-sm font-bold">$</span>
+      </div>
+      <%= f.number_field :amount, step: 0.01, placeholder: "0.00", 
+          class: "block w-full rounded-lg border-gray-300 pl-8 pr-3 text-right font-mono text-lg font-bold text-gray-800 focus:ring-2 focus:ring-indigo-500 sm:text-sm" %>
+    </div>
+  </td>
+
+  <%# 3. CREDIT SIDE (OUT) %>
+  <td class="px-4 py-6 align-top">
+    <%= f.collection_select :credit_account_id, Account.all.order(:name), :id, :name, 
+        { prompt: "Select Source Account" }, 
+        { class: "block w-full rounded-lg border-gray-300 shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm bg-red-50/10" } %>
+    <p class="mt-1 text-[10px] text-red-500 font-medium italic">Money will be taken from this account</p>
+  </td>
+
+  <%# 4. DELETE BUTTON %>
+  <td class="px-4 py-6 text-center align-top">
+    <button type="button" onclick="this.closest('tr').remove()" class="text-gray-300 hover:text-red-500 mt-2 transition-colors">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+    </button>
+  </td>
+</tr>

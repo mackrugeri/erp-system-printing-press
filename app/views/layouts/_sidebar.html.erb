@@ -1,0 +1,97 @@
+<div class="flex flex-col h-full bg-slate-900 text-slate-300 w-64 border-r border-slate-800">
+
+  <nav class="flex-1 px-4 space-y-8 overflow-y-auto custom-scrollbar pb-10">
+    
+    <div>
+    <h3 class="px-3 text-xs font-semibold text-slate-500 uppercase tracking-widest mb-2 py-2">Erp Sidebar</h3>
+      <%= link_to root_path, class: "flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors #{current_page?(root_path) ? 'bg-slate-800 text-white' : 'hover:bg-slate-800 hover:text-white'}" do %>
+        <span class="mr-3 text-lg">📊</span> Dashboard
+      <% end %>
+    </div>
+
+    <div>
+      <h3 class="px-3 text-xs font-semibold text-slate-500 uppercase tracking-widest mb-2">Accounting & Sales</h3>
+      <div class="space-y-1">
+        <%= link_to invoices_path, class: "flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors #{controller_name == 'invoices' ? 'bg-slate-800 text-white' : 'hover:bg-slate-800 hover:text-white'}" do %>
+          <span class="mr-3 opacity-70">📄</span> Sales Invoices
+        <% end %>
+
+        <%= link_to purchase_bills_path, class: "flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors #{controller_name == 'purchase_bills' ? 'bg-slate-800 text-white' : 'hover:bg-slate-800 hover:text-white'}" do %>
+          <span class="mr-3 opacity-70">📥</span> Purchase Bills
+        <% end %>
+
+        <%# NEW: Requirement 5.3 Cash Tally %>
+        <%= link_to cash_tallies_path, class: "flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors #{controller_name == 'cash_tallies' ? 'bg-slate-800 text-white' : 'hover:bg-slate-800 hover:text-white'}" do %>
+          <span class="mr-3 opacity-70">💹</span> Cash Tally / Closing
+        <% end %>
+
+        <%= link_to journal_entries_path, class: "flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors #{controller_name == 'journal_entries' ? 'bg-slate-800 text-white' : 'hover:bg-slate-800 hover:text-white'}" do %>
+          <span class="mr-3 opacity-70">📖</span> General Ledger
+        <% end %>
+
+        <%= link_to accounts_path, class: "flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors #{controller_name == 'accounts' ? 'bg-slate-800 text-white' : 'hover:bg-slate-800 hover:text-white'}" do %>
+          <span class="mr-3 opacity-70">💰</span> Chart of Accounts
+        <% end %>
+      </div>
+    </div>
+
+    <div>
+      <h3 class="px-3 text-xs font-semibold text-slate-500 uppercase tracking-widest mb-2">Manufacturing</h3>
+      <div class="space-y-1">
+        <%= link_to items_path, class: "flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors #{controller_name == 'items' ? 'bg-slate-800 text-white' : 'hover:bg-slate-800 hover:text-white'}" do %>
+          <span class="mr-3 opacity-70">📦</span> Items & BOM
+        <% end %>
+
+        <%= link_to new_stock_transaction_path, class: "flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors #{controller_name == 'stock_transactions' ? 'bg-slate-800 text-white' : 'hover:bg-slate-800 hover:text-white'}" do %>
+          <span class="mr-3 opacity-70">⚙️</span> Stock Adjustment
+        <% end %>
+
+        <%= link_to warehouses_path, class: "flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors #{controller_name == 'warehouses' ? 'bg-slate-800 text-white' : 'hover:bg-slate-800 hover:text-white'}" do %>
+          <span class="mr-3 opacity-70">🏢</span> Warehouses
+        <% end %>
+      </div>
+    </div>
+
+    <div>
+      <h3 class="px-3 text-xs font-semibold text-slate-500 uppercase tracking-widest mb-2">Analysis</h3>
+      <div class="space-y-1">
+        <%= link_to balance_sheet_reports_path, class: "flex items-center px-3 py-2 text-sm font-medium rounded-lg hover:bg-slate-800 hover:text-white transition-colors" do %>
+          <span class="mr-3 opacity-70">🏛️</span> Balance Sheet
+        <% end %>
+
+        <%= link_to profit_and_loss_reports_path, class: "flex items-center px-3 py-2 text-sm font-medium rounded-lg hover:bg-slate-800 hover:text-white transition-colors" do %>
+          <span class="mr-3 opacity-70">📈</span> Profit & Loss
+        <% end %>
+
+        <%= link_to trial_balance_reports_path, class: "flex items-center px-3 py-2 text-sm font-medium rounded-lg hover:bg-slate-800 hover:text-white transition-colors" do %>
+          <span class="mr-3 opacity-70">⚖️</span> Trial Balance
+        <% end %>
+      </div>
+    </div>
+
+    <div>
+      <h3 class="px-3 text-xs font-semibold text-slate-500 uppercase tracking-widest mb-2">CRM</h3>
+      <div class="space-y-1">
+        <%= link_to contacts_path, class: "flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors #{controller_name == 'contacts' ? 'bg-slate-800 text-white' : 'hover:bg-slate-800 hover:text-white'}" do %>
+          <span class="mr-3 opacity-70">👥</span> Customer / Vendor
+        <% end %>
+      </div>
+    </div>
+
+  </nav>
+
+  <div class="p-4 bg-slate-950 border-t border-slate-800">
+    <div class="flex items-center gap-3 px-2">
+      <div class="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center font-bold text-xs text-white">
+        AD
+      </div>
+      <div class="flex-1 overflow-hidden">
+        <p class="text-xs font-bold text-white truncate">Admin User</p>
+        <p class="text-[10px] text-slate-500 truncate">System Administrator</p>
+      </div>
+      <%= link_to "#", class: "text-slate-500 hover:text-white" do %>
+        <span class="text-lg">⚙️</span>
+      <% end %>
+    </div>
+  </div>
+</div>

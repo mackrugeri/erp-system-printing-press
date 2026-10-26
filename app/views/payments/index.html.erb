@@ -1,0 +1,63 @@
+<%# app/views/payments/index.html.erb %>
+<div class="max-w-6xl mx-auto py-10 px-4">
+  <div class="flex justify-between items-end mb-8">
+    <div>
+      <h1 class="text-4xl font-black text-slate-900 tracking-tighter uppercase italic">Payment History</h1>
+      <p class="text-slate-500 font-medium">Tracking all settlements with Customers and Vendors.</p>
+    </div>
+    <%= link_to new_payment_path, class: "bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-blue-200 transition-all" do %>
+      + Record New Payment
+    <% end %>
+  </div>
+
+  <div class="bg-white border border-slate-200 rounded-[2rem] shadow-sm overflow-hidden">
+    <table class="w-full text-left">
+      <thead>
+        <tr class="bg-slate-50 border-b border-slate-200 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+          <th class="p-5">Date</th>
+          <th class="p-5">Party / Contact</th>
+          <th class="p-5">Account</th>
+          <th class="p-5">Method</th>
+          <th class="p-5 text-right">Amount</th>
+          <th class="p-5"></th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100">
+        <% @payments.each do |payment| %>
+          <tr class="hover:bg-slate-50/50 transition-colors group">
+            <td class="p-5 text-sm font-bold text-slate-600">
+              <%= payment.payment_date.strftime("%b %d, %Y") %>
+            </td>
+            <td class="p-5">
+              <span class="block font-black text-slate-900"><%= payment.contact.name %></span>
+              <span class="text-[10px] uppercase font-bold <%= payment.contact.contact_type == 'Customer' ? 'text-green-500' : 'text-amber-500' %>">
+                <%= payment.contact.contact_type %>
+              </span>
+            </td>
+            <td class="p-5 text-sm text-slate-500 font-medium">
+              <%= payment.account.name %>
+            </td>
+            <td class="p-5">
+              <span class="bg-slate-100 text-slate-600 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">
+                <%= payment.payment_method %>
+              </span>
+            </td>
+            <td class="p-5 text-right font-mono font-black text-lg <%= payment.contact.contact_type == 'Customer' ? 'text-slate-900' : 'text-red-600' %>">
+              <%= payment.contact.contact_type == 'Customer' ? '+' : '-' %>
+              <%= number_to_currency(payment.amount) %>
+            </td>
+            <td class="p-5 text-right">
+              <%= link_to "View Receipt", payment_path(payment), class: "text-xs font-bold text-blue-600 hover:underline" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+    
+    <% if @payments.empty? %>
+      <div class="p-20 text-center">
+        <p class="text-slate-400 italic">No payments recorded yet.</p>
+      </div>
+    <% end %>
+  </div>
+</div>

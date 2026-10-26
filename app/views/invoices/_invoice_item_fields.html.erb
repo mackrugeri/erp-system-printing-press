@@ -1,0 +1,35 @@
+<tr class="nested-fields group" data-new-record="<%= f.object.new_record? %>">
+  <td class="py-4">
+    <%# Using Item.all to ensure items appear even without filters %>
+    <%= f.collection_select :item_id, Item.all, :id, :name, 
+        { prompt: "Select Product" }, 
+        class: "w-full border-transparent bg-transparent font-bold text-slate-700 focus:ring-blue-500 rounded-xl" %>
+  </td>
+  
+  <td class="py-4">
+    <%= f.number_field :quantity, 
+        data: { action: "input->invoice-total#calculate", invoice_total_target: "quantity" },
+        class: "w-full border-slate-100 bg-slate-50/50 rounded-xl text-center font-bold focus:ring-blue-500" %>
+  </td>
+  
+  <td class="py-4">
+    <%= f.text_field :unit_price, 
+        data: { action: "input->invoice-total#calculate", invoice_total_target: "price" },
+        class: "w-full border-slate-100 bg-slate-50/50 rounded-xl text-right font-mono font-bold focus:ring-blue-500", 
+        placeholder: "0.00" %>
+  </td>
+
+  <td class="py-4 text-center">
+    <%# Hidden field tracks deletion for Rails backend %>
+    <%= f.hidden_field :_destroy %>
+    
+    <%# type="button" is vital so it doesn't submit the form accidentally %>
+    <button type="button" 
+            data-action="click->invoice-total#removeRow" 
+            class="text-slate-300 hover:text-red-500 transition-colors px-2">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+      </svg>
+    </button>
+  </td>
+</tr>

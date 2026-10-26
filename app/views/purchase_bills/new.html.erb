@@ -1,0 +1,23 @@
+<div class="min-h-screen bg-slate-50 pb-20">
+  <div class="max-w-5xl mx-auto px-6 py-8">
+    <%# Breadcrumbs %>
+    <div class="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 mb-4">
+      <%= link_to "Purchase Bills", purchase_bills_path, class: "hover:text-blue-600" %>
+      <span>/</span>
+      <span class="text-slate-900"><%= @purchase_bill.new_record? ? "New" : "Edit" %></span>
+    </div>
+
+    <div class="flex justify-between items-end mb-8">
+      <div>
+        <h1 class="text-4xl font-black text-slate-900 tracking-tighter uppercase italic">
+          <%= @purchase_bill.new_record? ? "Create Bill" : "Edit Bill ##{@purchase_bill.bill_number}" %>
+        </h1>
+        <p class="text-slate-500 font-medium mt-1">
+          <%= @purchase_bill.new_record? ? "Record a new vendor invoice and update inventory." : "Updating existing record for #{@purchase_bill.contact&.name}." %>
+        </p>
+      </div>
+    </div>
+
+    <%= render "form", purchase_bill: @purchase_bill %>
+  </div>
+</div>

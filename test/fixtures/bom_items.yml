@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  item: one
+  material_id: 1
+  quantity: 9.99
+
+two:
+  item: two
+  material_id: 1
+  quantity: 9.99

@@ -1,0 +1,38 @@
+<div class="mb-8 flex justify-between items-end">
+  <div>
+    <%= link_to '← Back to List', warehouses_path, class: "text-sm text-blue-600 hover:underline" %>
+    <h1 class="text-3xl font-bold text-gray-900 mt-2"><%= @warehouse.name %></h1>
+    <p class="text-gray-500"><%= @warehouse.location %></p>
+  </div>
+  <div class="bg-slate-900 text-white px-6 py-3 rounded-xl shadow-lg text-right">
+    <p class="text-[10px] uppercase tracking-widest opacity-60">Total Units in Stock</p>
+    <p class="text-2xl font-black"><%= @warehouse.stock_transactions.sum(:quantity) %></p>
+  </div>
+</div>
+
+<div class="bg-white shadow-sm border border-gray-200 rounded-xl overflow-hidden">
+  <table class="min-w-full divide-y divide-gray-200">
+    <thead class="bg-gray-50">
+      <tr>
+        <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase">Item</th>
+        <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase">SKU</th>
+        <th class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase">Qty Available</th>
+      </tr>
+    </thead>
+    <tbody class="bg-white divide-y divide-gray-200 text-sm">
+      <%# We join with stock_transactions to get the quantity specific to this warehouse %>
+      <% Item.joins(:stock_transactions).where(stock_transactions: { warehouse_id: @warehouse.id }).distinct.each do |item| %>
+        <% qty = item.stock_transactions.where(warehouse_id: @warehouse.id).sum(:quantity) %>
+        <% if qty != 0 %>
+          <tr class="hover:bg-gray-50">
+            <td class="px-6 py-4 font-medium text-gray-900"><%= item.name %></td>
+            <td class="px-6 py-4 font-mono text-gray-400 text-xs"><%= item.sku %></td>
+            <td class="px-6 py-4 text-right font-bold <%= qty < 0 ? 'text-red-600' : 'text-gray-900' %>">
+              <%= qty %>
+            </td>
+          </tr>
+        <% end %>
+      <% end %>
+    </tbody>
+  </table>
+</div>

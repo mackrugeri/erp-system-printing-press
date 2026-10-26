@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  contact: one
+  account: one
+  journal_entry: one
+  amount: 9.99
+  payment_date: 2025-12-19
+  payment_method: MyString
+  note: MyText
+
+two:
+  contact: two
+  account: two
+  journal_entry: two
+  amount: 9.99
+  payment_date: 2025-12-19
+  payment_method: MyString
+  note: MyText

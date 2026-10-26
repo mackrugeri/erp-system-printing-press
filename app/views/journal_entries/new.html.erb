@@ -1,0 +1,112 @@
+<div class="max-w-6xl mx-auto py-10 px-4">
+  <div class="mb-8 flex justify-between items-end">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">New Journal Voucher</h1>
+      <p class="text-gray-500">Dual-account transfer: Record money moving from one account to another.</p>
+    </div>
+    <div class="text-right">
+      <span class="text-xs font-semibold uppercase text-gray-400 block tracking-widest">Next Available ID</span>
+      <span class="inline-flex items-center px-3 py-1 rounded-md text-sm font-mono font-bold bg-blue-100 text-blue-800 border border-blue-200">
+        <%= @journal_entry.reference.presence || "JE-####" %>
+      </span>
+    </div>
+  </div>
+
+  <%# Error Handling Block %>
+  <% if @journal_entry.errors.any? %>
+    <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-6 shadow-sm rounded-r-lg">
+      <div class="flex">
+        <div class="flex-shrink-0">
+          <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+          </svg>
+        </div>
+        <div class="ml-3">
+          <h3 class="text-sm font-bold text-red-800 uppercase">Entry cannot be posted</h3>
+          <ul class="mt-1 list-disc list-inside text-sm text-red-700">
+            <% @journal_entry.errors.full_messages.each do |msg| %>
+              <li><%= msg %></li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <%= form_with(model: @journal_entry, class: "space-y-6") do |f| %>
+    
+    <%# --- Header Card --- %>
+    <div class="bg-white p-8 shadow-sm border border-gray-200 rounded-xl grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div>
+        <%= f.label :date, class: "block text-sm font-semibold text-gray-700 mb-2" %>
+        <%= f.date_field :date, class: "w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+      </div>
+      <div>
+        <%= f.label :reference, "Voucher Number", class: "block text-sm font-semibold text-gray-700 mb-2" %>
+        <%= f.text_field :reference, 
+            readonly: true, 
+            placeholder: "JE-Auto",
+            class: "w-full rounded-lg border-gray-200 bg-gray-50 font-mono text-gray-500 sm:text-sm cursor-not-allowed shadow-inner" %>
+      </div>
+      <div>
+        <%= f.label :description, "Narration / Description", class: "block text-sm font-semibold text-gray-700 mb-2" %>
+        <%= f.text_field :description, 
+            placeholder: "Brief explanation of this entry...", 
+            class: "w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+      </div>
+    </div>
+
+    <%# --- Ledger Table Card --- %>
+    <div class="bg-white shadow-xl border border-gray-200 rounded-2xl overflow-hidden">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50/80">
+          <tr>
+            <th class="px-6 py-4 text-left text-xs font-bold text-blue-600 uppercase tracking-widest w-1/3 border-r border-gray-100">
+              Debit Account <span class="block font-normal text-gray-400 capitalize">Receiving Money</span>
+            </th>
+            <th class="px-6 py-4 text-center text-xs font-bold text-gray-700 uppercase tracking-widest w-1/4">
+              Amount
+            </th>
+            <th class="px-6 py-4 text-left text-xs font-bold text-red-600 uppercase tracking-widest w-1/3 border-l border-gray-100">
+              Credit Account <span class="block font-normal text-gray-400 capitalize">Source of Money</span>
+            </th>
+            <th class="w-12"></th>
+          </tr>
+        </thead>
+        
+        <%# Turbo Stream Target %>
+        <tbody id="ledger-lines" class="divide-y divide-gray-100">
+          <%= f.fields_for :ledger_entries do |line_f| %>
+            <%= render "ledger_entry_fields", f: line_f %>
+          <% end %>
+        </tbody>
+      </table>
+
+      <%# Add Row Control %>
+      <div class="p-6 bg-gray-50/50 border-t border-gray-100">
+        <%= link_to add_row_journal_entries_path, 
+            data: { turbo_method: :post }, 
+            class: "inline-flex items-center px-4 py-2 rounded-lg text-sm font-bold text-blue-600 bg-white border border-blue-200 hover:bg-blue-50 hover:border-blue-300 shadow-sm transition-all" do %>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+          </svg>
+          Add Another Entry Row
+        <% end %>
+      </div>
+    </div>
+
+    <%# --- Submit Section --- %>
+    <div class="flex items-center justify-between bg-white p-8 rounded-2xl border border-gray-200 shadow-sm">
+      <div class="flex items-center text-gray-500 italic text-sm">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        Your balanced debit and credit entries will be generated automatically.
+      </div>
+      <div class="flex items-center space-x-6">
+        <%= link_to "Discard Changes", journal_entries_path, class: "text-sm font-bold text-gray-400 hover:text-red-500 transition-colors" %>
+        <%= f.submit "Post Voucher", class: "bg-blue-600 text-white px-12 py-4 rounded-xl font-bold hover:bg-blue-700 shadow-[0_10px_20px_-10px_rgba(37,99,235,0.5)] transform active:scale-95 transition-all cursor-pointer" %>
+      </div>
+    </div>
+  <% end %>
+</div>

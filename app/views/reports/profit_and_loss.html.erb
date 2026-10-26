@@ -1,0 +1,82 @@
+<div class="max-w-6xl mx-auto py-10 px-4">
+  <%# Header Section %>
+  <div class="flex justify-between items-end mb-8">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">Profit & Loss Statement</h1>
+      <p class="text-gray-500 font-mono">Period: <%= @start_date.strftime("%B %d, %Y") %> — <%= @end_date.strftime("%B %d, %Y") %></p>
+    </div>
+    <div class="flex space-x-3">
+      <%= link_to profit_and_loss_reports_path(format: :csv, start_date: @start_date, end_date: @end_date), class: "inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition" do %>
+        <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+        Download CSV
+      <% end %>
+    </div>
+  </div>
+
+  <%# Filter Form - Two Date Inputs matching Balance Sheet UI %>
+  <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 mb-8">
+    <%= form_with url: profit_and_loss_reports_path, method: :get, class: "flex items-end space-x-4", local: true do |f| %>
+      <div class="grid grid-cols-2 gap-4 flex-1 max-w-md">
+        <div>
+          <%= f.label :start_date, "From Date", class: "block text-xs font-bold text-gray-500 uppercase mb-1" %>
+          <%= f.date_field :start_date, value: @start_date, class: "w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+        </div>
+        <div>
+          <%= f.label :end_date, "To Date", class: "block text-xs font-bold text-gray-500 uppercase mb-1" %>
+          <%= f.date_field :end_date, value: @end_date, class: "w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+        </div>
+      </div>
+      <%= f.submit "Update Report", class: "bg-gray-800 text-white px-6 py-2 rounded-lg text-sm font-bold hover:bg-black transition cursor-pointer h-10" %>
+    <% end %>
+  </div>
+
+  <%# Account Tables %>
+  <div class="space-y-8">
+    
+    <div class="bg-white shadow border border-gray-200 rounded-xl overflow-hidden">
+      <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
+        <h2 class="text-lg font-bold text-gray-800 uppercase tracking-widest">Income</h2>
+      </div>
+      <div class="p-6">
+        <% @income_accounts.each do |account| %>
+          <div class="flex justify-between py-3 border-b border-gray-50">
+            <span class="text-gray-600 font-medium"><%= account.name %></span>
+            <span class="font-mono text-gray-900"><%= number_to_currency(account.balance_for_range(@start_date, @end_date)) %></span>
+          </div>
+        <% end %>
+        <div class="flex justify-between pt-4 font-bold text-xl text-green-700">
+          <span>Total Income</span>
+          <span><%= number_to_currency(@total_income) %></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white shadow border border-gray-200 rounded-xl overflow-hidden">
+      <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
+        <h2 class="text-lg font-bold text-gray-800 uppercase tracking-widest">Expense</h2>
+      </div>
+      <div class="p-6">
+        <% @expense_accounts.each do |account| %>
+          <div class="flex justify-between py-3 border-b border-gray-50">
+            <span class="text-gray-600 font-medium"><%= account.name %></span>
+            <span class="font-mono text-red-600"><%= number_to_currency(account.balance_for_range(@start_date, @end_date)) %></span>
+          </div>
+        <% end %>
+        <div class="flex justify-between pt-4 font-bold text-xl text-red-700">
+          <span>Total Expenses</span>
+          <span><%= number_to_currency(@total_expenses) %></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex justify-between items-center p-8 rounded-xl shadow-lg bg-slate-900 text-white">
+      <div>
+        <h2 class="text-2xl font-black uppercase tracking-tighter">Net <%= @net_profit >= 0 ? 'Profit' : 'Loss' %></h2>
+        <p class="opacity-70 text-sm italic">For the period <%= @start_date.strftime("%b %d") %> to <%= @end_date.strftime("%b %d") %></p>
+      </div>
+      <div class="text-4xl font-mono font-bold">
+        <%= number_to_currency(@net_profit) %>
+      </div>
+    </div>
+  </div>
+</div>

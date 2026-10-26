@@ -1,0 +1,25 @@
+<div class="max-w-3xl mx-auto px-4 py-12">
+  <div class="mb-8 flex items-center justify-between">
+    <div>
+      <h1 class="text-3xl font-black text-slate-900 italic uppercase tracking-tight">
+        Add New <%= @contact.contact_type %>
+      </h1>
+      <p class="text-slate-500 mt-1">Register a new <%= @contact.contact_type.downcase %> in your ERP system.</p>
+    </div>
+    <%= link_to "Back to List", contacts_path, class: "text-slate-400 hover:text-slate-600 text-sm font-bold transition" %>
+  </div>
+
+  <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-8 flex gap-3">
+    <span class="text-blue-500">ℹ️</span>
+    <p class="text-xs text-blue-800">
+      <strong>Note:</strong> Creating a new contact will automatically generate a corresponding ledger account in your <strong>Chart of Accounts</strong> under <%= @contact.contact_type == 'Vendor' ? 'Accounts Payable' : 'Accounts Receivable' %>.
+    </p>
+  </div>
+
+  <div class="bg-white border border-slate-200 shadow-2xl rounded-2xl overflow-hidden">
+    <div class="p-8">
+      <%# This calls the _form.html.erb partial we created previously %>
+      <%= render "form", contact: @contact %>
+    </div>
+  </div>
+</div>

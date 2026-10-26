@@ -1,0 +1,51 @@
+<div class="flex justify-between items-center mb-8">
+  <div>
+    <h1 class="text-2xl font-bold text-gray-900">Journal Entries</h1>
+    <p class="text-sm text-gray-500">Chronological record of all financial transactions.</p>
+  </div>
+  <%= link_to 'New Journal Voucher', new_journal_entry_path, class: "bg-slate-900 hover:bg-black text-white px-4 py-2 rounded-lg font-semibold shadow-sm transition" %>
+</div>
+
+<div class="bg-white shadow-sm border border-gray-200 rounded-xl overflow-hidden">
+  <table class="min-w-full divide-y divide-gray-200">
+    <thead class="bg-gray-50">
+      <tr>
+        <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase">Date / Ref</th>
+        <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase">Description</th>
+        <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase">Accounts Affected</th>
+        <th class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase">Amount</th>
+        <th class="px-6 py-3"></th>
+      </tr>
+    </thead>
+    <tbody class="bg-white divide-y divide-gray-200">
+      <% @journal_entries.each do |journal| %>
+        <tr class="hover:bg-gray-50 transition-colors align-top">
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm font-bold text-gray-900"><%= journal.date&.strftime("%d %b %Y") %></div>
+            <div class="text-xs font-mono text-gray-400"><%= journal.reference %></div>
+          </td>
+          <td class="px-6 py-4 text-sm text-gray-600 max-w-xs truncate">
+            <%= journal.description %>
+          </td>
+          <td class="px-6 py-4">
+            <% journal.ledger_entries.each do |line| %>
+              <div class="text-xs mb-1">
+                <span class="<%= line.debit.to_f > 0 ? 'font-bold text-gray-800' : 'pl-4 text-gray-500 italic' %>">
+                  <%= line.account.name %>
+                </span>
+              </div>
+            <% end %>
+          </td>
+          <td class="px-6 py-4 text-right">
+            <div class="text-sm font-mono font-bold text-gray-900">
+              <%= number_to_currency(journal.ledger_entries.sum { |l| l.debit.to_f }) %>
+            </div>
+          </td>
+          <td class="px-6 py-4 text-right">
+            <%= link_to 'Delete', journal, data: { turbo_method: :delete, turbo_confirm: 'Are you sure?' }, class: "text-red-400 hover:text-red-600 text-xs" %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

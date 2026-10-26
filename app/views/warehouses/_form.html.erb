@@ -1,0 +1,27 @@
+<%= form_with(model: warehouse, class: "space-y-6 bg-white p-8 shadow-sm border border-gray-200 rounded-xl") do |f| %>
+  <% if warehouse.errors.any? %>
+    <div class="bg-red-50 p-4 rounded-lg">
+      <h2 class="text-red-800 font-bold text-sm"><%= pluralize(warehouse.errors.count, "error") %> prohibited this warehouse from being saved:</h2>
+      <ul class="list-disc ml-5 text-red-700 text-sm">
+        <% warehouse.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= f.label :name, "Warehouse Name", class: "block text-sm font-semibold text-gray-700" %>
+    <%= f.text_field :name, placeholder: "e.g. Main Production Floor", class: "mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500" %>
+  </div>
+
+  <div>
+    <%= f.label :location, "Physical Location / Address", class: "block text-sm font-semibold text-gray-700" %>
+    <%= f.text_field :location, placeholder: "e.g. Building A, Section 4", class: "mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500" %>
+  </div>
+
+  <div class="flex justify-end items-center space-x-4 pt-6 border-t">
+    <%= link_to 'Cancel', warehouses_path, class: "text-sm font-medium text-gray-600" %>
+    <%= f.submit "Save Warehouse", class: "bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-bold shadow-md cursor-pointer transition-all" %>
+  </div>
+<% end %>

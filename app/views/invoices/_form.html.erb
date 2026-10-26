@@ -1,0 +1,98 @@
+<%# app/views/invoices/_form.html.erb %>
+<% invoice_obj = local_assigns[:invoice] || @invoice %>
+
+<%= form_with(model: invoice_obj, 
+    data: { controller: "invoice-total" }, 
+    class: "bg-white shadow-lg rounded-[2.5rem] overflow-hidden border border-slate-200") do |f| %>
+  
+  <%# 1. ERROR BLOCK: This will now show the posting_error we added in the controller %>
+  <% if invoice_obj.errors.any? %>
+    <div class="bg-red-50 p-6 border-b border-red-100">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="bg-red-600 text-white w-6 h-6 flex items-center justify-center rounded-full shadow-lg shadow-red-200 text-[10px] font-bold">!</div>
+        <h4 class="text-red-800 font-black uppercase text-xs tracking-widest">Transaction Blocked</h4>
+      </div>
+      <ul class="space-y-2 ml-9">
+        <% invoice_obj.errors.full_messages.each do |msg| %>
+          <li class="flex items-start gap-2 text-red-700 text-xs font-bold">
+            <span class="text-red-400 mt-1">•</span> <%= msg %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%# 2. HEADER %>
+  <div class="p-8 border-b border-slate-200 flex justify-between items-center bg-slate-50/50">
+    <div>
+      <h2 class="text-2xl font-black text-slate-800 italic uppercase tracking-tighter">
+        <%= invoice_obj.new_record? ? "New Sales Invoice" : "Edit Invoice #{invoice_obj.invoice_number}" %>
+      </h2>
+      <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
+        Current Status: <span class="text-blue-600"><%= invoice_obj.status || 'Draft' %></span>
+      </p>
+    </div>
+    <div class="text-right">
+      <%= f.label :date, class: "block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1" %>
+      <%= f.date_field :date, value: (invoice_obj.date || Date.today), class: "border-slate-200 rounded-xl shadow-sm focus:ring-blue-500 font-bold text-sm" %>
+    </div>
+  </div>
+
+  <div class="p-10">
+    <%# 3. CUSTOMER & WAREHOUSE %>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+      <div>
+        <%= f.label :contact_id, "Customer Account", class: "block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2 ml-1" %>
+        <%= f.collection_select :contact_id, Contact.where(contact_type: 'Customer'), :id, :name, { prompt: "Select Customer" }, class: "block w-full border-slate-200 rounded-2xl py-3 px-5 font-bold bg-slate-50" %>
+      </div>
+      <div>
+        <%= f.label :warehouse_id, "Dispatch From", class: "block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2 ml-1" %>
+        <%= f.collection_select :warehouse_id, Warehouse.all, :id, :name, { prompt: "Select Warehouse" }, class: "block w-full border-slate-200 rounded-2xl py-3 px-5 font-bold bg-slate-50" %>
+      </div>
+    </div>
+
+    <%# 4. ITEMS TABLE %>
+    <table class="w-full mb-4">
+      <thead>
+        <tr class="text-left border-b-2 border-slate-100">
+          <th class="pb-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Product</th>
+          <th class="pb-4 text-[10px] font-black text-slate-400 uppercase tracking-widest w-24 text-center">Qty</th>
+          <th class="pb-4 text-[10px] font-black text-slate-400 uppercase tracking-widest w-40 text-right">Unit Price</th>
+          <th class="pb-4 text-[10px] font-black text-slate-400 uppercase tracking-widest w-20 text-center"></th>
+        </tr>
+      </thead>
+      <tbody data-invoice-total-target="container">
+        <%= f.fields_for :invoice_items do |item_f| %>
+          <%= render "invoice_item_fields", f: item_f %>
+        <% end %>
+      </tbody>
+    </table>
+
+    <button type="button" data-action="click->invoice-total#addRow" class="text-[10px] font-black uppercase text-blue-600 mb-10">+ Add Item Row</button>
+
+    <template data-invoice-total-target="template">
+      <%= f.fields_for :invoice_items, InvoiceItem.new, child_index: "NEW_RECORD" do |item_f| %>
+        <%= render "invoice_item_fields", f: item_f %>
+      <% end %>
+    </template>
+
+    <%# 5. TOTAL (PKR) %>
+    <div class="flex justify-end pt-8 border-t border-slate-100">
+      <div class="w-80 bg-slate-900 p-8 rounded-[2.5rem] text-white shadow-2xl shadow-blue-100">
+        <span class="text-[9px] font-black uppercase tracking-widest text-slate-500 block mb-1">Net Total (PKR)</span>
+        <span class="text-3xl font-black font-mono tracking-tighter" data-invoice-total-target="total">
+          <%= number_to_currency(invoice_obj.total_amount || 0, unit: "Rs. ") %>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <%# 6. ACTION BUTTONS %>
+  <div class="p-8 bg-slate-50 border-t border-slate-200 flex justify-end items-center gap-6">
+    <%= link_to "Cancel", invoices_path, class: "text-[10px] font-black text-slate-400 uppercase hover:text-slate-900" %>
+    <% if invoice_obj.new_record? || invoice_obj.status == 'Draft' %>
+      <%= f.submit "Save as Draft", class: "px-6 py-4 text-[10px] font-black uppercase text-slate-600 bg-white border border-slate-200 rounded-2xl cursor-pointer" %>
+      <%= f.submit "Create & Post Invoice", class: "px-10 py-4 text-[10px] font-black uppercase text-white bg-blue-600 rounded-2xl shadow-xl cursor-pointer" %>
+    <% end %>
+  </div>
+<% end %>

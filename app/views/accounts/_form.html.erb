@@ -1,0 +1,51 @@
+<%= form_with(model: account, class: "bg-white shadow-sm border border-gray-200 rounded-xl overflow-hidden") do |f| %>
+  <div class="p-8 space-y-6">
+    <% if account.errors.any? %>
+      <div class="bg-red-50 p-4 rounded-lg text-red-700 text-sm">
+        <p class="font-bold"><%= pluralize(account.errors.count, "error") %> prohibited this account from being saved:</p>
+        <ul class="list-disc ml-5">
+          <% account.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div>
+        <%= f.label :name, "Account Name", class: "block text-sm font-semibold text-gray-700 mb-1" %>
+        <%= f.text_field :name, class: "block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+      </div>
+      <div>
+        <%= f.label :code, "Account Code", class: "block text-sm font-semibold text-gray-700 mb-1" %>
+        <%= f.text_field :code, class: "block w-full rounded-lg border-gray-300 font-mono shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div>
+        <%= f.label :account_type, "Classification", class: "block text-sm font-semibold text-gray-700 mb-1" %>
+        <%= f.select :account_type, ['Asset', 'Liability', 'Equity', 'Income', 'Expense', 'Inward-Expense', 'Outward-Expense'], {}, { class: "block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" } %>
+      </div>
+      <div>
+        <%= f.label :opening_balance, "Opening Balance", class: "block text-sm font-semibold text-gray-700 mb-1" %>
+        <div class="relative mt-1 rounded-md shadow-sm">
+          <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+            <span class="text-gray-500 sm:text-sm">$</span>
+          </div>
+          <%= f.number_field :opening_balance, step: 0.01, class: "block w-full rounded-lg border-gray-300 pl-7 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <%= f.label :description, "Description", class: "block text-sm font-semibold text-gray-700 mb-1" %>
+      <%= f.text_area :description, rows: 3, class: "block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+    </div>
+  </div>
+
+  <div class="bg-gray-50 px-8 py-4 border-t border-gray-200 flex items-center justify-end space-x-4">
+    <%= link_to "Cancel", accounts_path, class: "text-sm font-medium text-gray-600 hover:text-gray-800" %>
+    <%= f.submit class: "inline-flex justify-center py-2 px-6 border border-transparent shadow-sm text-sm font-bold rounded-lg text-white bg-blue-600 hover:bg-blue-700 transition cursor-pointer" %>
+  </div>
+<% end %>

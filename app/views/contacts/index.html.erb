@@ -1,0 +1,55 @@
+<div class="max-w-7xl mx-auto px-4 py-8">
+  <div class="flex justify-between items-center mb-8">
+    <h1 class="text-2xl font-bold text-slate-900">Contacts</h1>
+    <div class="space-x-2">
+      <%= link_to 'Add Customer', new_contact_path(type: 'Customer'), class: "bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition" %>
+      <%= link_to 'Add Vendor', new_contact_path(type: 'Vendor'), class: "bg-slate-800 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-slate-900 transition" %>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+      <div class="px-6 py-4 bg-blue-50 border-b border-blue-100">
+        <h2 class="text-sm font-bold text-blue-800 uppercase tracking-wider">Customers (Receivables)</h2>
+      </div>
+      <table class="w-full text-left">
+        <tbody class="divide-y divide-slate-100">
+          <% @customers.each do |contact| %>
+            <tr class="hover:bg-slate-50 transition">
+              <td class="px-6 py-4">
+                <div class="font-bold text-slate-900"><%= contact.name %></div>
+                <div class="text-xs text-slate-500"><%= contact.email %></div>
+              </td>
+              <td class="px-6 py-4 text-right space-x-3">
+                <%= link_to 'Ledger', contact_path(contact), class: "text-blue-600 hover:underline text-sm font-medium" %>
+                <%= link_to 'Edit', edit_contact_path(contact), class: "text-slate-400 hover:text-slate-600 text-sm" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+      <div class="px-6 py-4 bg-slate-50 border-b border-slate-200">
+        <h2 class="text-sm font-bold text-slate-700 uppercase tracking-wider">Vendors (Payables)</h2>
+      </div>
+      <table class="w-full text-left">
+        <tbody class="divide-y divide-slate-100">
+          <% @vendors.each do |contact| %>
+            <tr class="hover:bg-slate-50 transition">
+              <td class="px-6 py-4">
+                <div class="font-bold text-slate-900"><%= contact.name %></div>
+                <div class="text-xs text-slate-500"><%= contact.email %></div>
+              </td>
+              <td class="px-6 py-4 text-right space-x-3">
+                <%= link_to 'Ledger', contact_path(contact), class: "text-blue-600 hover:underline text-sm font-medium" %>
+                <%= link_to 'Edit', edit_contact_path(contact), class: "text-slate-400 hover:text-slate-600 text-sm" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

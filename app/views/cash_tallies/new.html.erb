@@ -1,0 +1,55 @@
+<%# app/views/cash_tallies/new.html.erb %>
+<div class="max-w-xl mx-auto py-12 px-4">
+  <div class="text-center mb-10">
+    <h1 class="text-3xl font-black text-slate-900 uppercase italic tracking-tighter">Daily Cash Tally</h1>
+  </div>
+
+  <div class="bg-white shadow-2xl rounded-[2.5rem] border border-slate-200 overflow-hidden">
+    <%# --- SYSTEM BALANCE HEADER --- %>
+    <div class="p-8 bg-slate-50 border-b border-slate-100 flex justify-between items-center">
+      <div>
+        <p class="text-xs font-black text-slate-400 uppercase">System Balance</p>
+        <%# Added &. to prevent NilClass error %>
+        <p class="text-2xl font-black text-slate-900"><%= number_to_currency(@cash_account&.balance || 0) %></p>
+      </div>
+      <div class="text-right">
+        <p class="text-xs font-black text-slate-400 uppercase">Account</p>
+        <p class="font-bold text-slate-700 text-sm"><%= @cash_account&.name || "Missing Account" %></p>
+      </div>
+    </div>
+
+    <%= form_with(model: @cash_tally, local: true) do |f| %>
+      <%= f.hidden_field :account_id, value: @cash_account&.id %>
+      
+      <div class="p-10 space-y-6">
+        <% if @cash_tally.errors.any? %>
+          <div class="p-4 bg-red-50 text-red-700 rounded-2xl text-xs font-bold border border-red-100">
+            <%= @cash_tally.errors.full_messages.to_sentence %>
+          </div>
+        <% end %>
+
+        <div>
+          <%= f.label :physical_amount, "Physical Cash Count", class: "block text-xs font-black text-slate-400 uppercase tracking-widest mb-2" %>
+          <%= f.number_field :physical_amount, step: :any, class: "w-full rounded-2xl border-slate-200 py-4 px-5 text-xl font-mono font-bold focus:ring-4 focus:ring-green-500/10 focus:border-green-500 shadow-sm text-slate-700", placeholder: "0.00", autofocus: true %>
+        </div>
+
+        <div>
+          <%= f.label :note, "Notes / Remarks", class: "block text-xs font-black text-slate-400 uppercase tracking-widest mb-2" %>
+          <%= f.text_area :note, rows: 2, class: "w-full rounded-2xl border-slate-200 py-4 px-5 focus:ring-4 focus:ring-green-500/10 focus:border-green-500 shadow-sm text-slate-700", placeholder: "Any reason for shortage/excess?" %>
+        </div>
+
+        <div class="bg-blue-50/50 p-4 rounded-2xl border border-blue-100 flex gap-3">
+          <span class="text-lg">🛡️</span>
+          <p class="text-[10px] text-blue-800 leading-tight">
+            <strong>Internal Control:</strong> Once submitted, this tally cannot be edited. It serves as a permanent audit record for the end of the day.
+          </p>
+        </div>
+      </div>
+
+      <div class="p-10 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+        <%= link_to "Cancel", cash_tallies_path, class: "text-sm font-black text-slate-400 uppercase tracking-widest hover:text-slate-900 transition-colors" %>
+        <%= f.submit "Post Tally & Close Day", class: "bg-slate-900 hover:bg-black text-white px-10 py-4 rounded-2xl font-black uppercase tracking-tighter shadow-xl transform active:scale-95 transition-all cursor-pointer" %>
+      </div>
+    <% end %>
+  </div>
+</div>

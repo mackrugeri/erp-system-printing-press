@@ -1,0 +1,81 @@
+<div class="max-w-4xl mx-auto bg-white shadow-xl rounded-xl overflow-hidden mt-10">
+  <div class="p-1 bg-gradient-to-r from-blue-600 to-indigo-600"></div>
+
+  <div class="flex items-center gap-3">
+    <%# ... existing buttons like Edit or Back ... %>
+
+    <% if @invoice.status == 'posted' %>
+      <%= link_to new_payment_path(contact_id: @invoice.contact_id, suggested_amount: @invoice.total_amount, note: "Payment for Invoice ##{@invoice.number}"), 
+          class: "bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-green-200 transition-all flex items-center gap-2" do %>
+        <span>💵</span> Receive Payment
+      <% end %>
+    <% end %>
+  </div>
+  
+  <div class="p-8 flex justify-between items-start">
+    <div>
+      <h1 class="text-3xl font-extrabold text-gray-900">INVOICE</h1>
+      <p class="text-lg text-gray-500">No: <%= @invoice.invoice_number %></p>
+      
+      <div class="mt-4">
+        <span class="px-3 py-1 text-xs font-bold uppercase rounded-full 
+          <%= @invoice.status == 'Posted' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600' %>">
+          <%= @invoice.status %>
+        </span>
+      </div>
+    </div>
+    
+    <div class="text-right text-gray-600">
+      <p class="font-bold text-gray-900"><%= @invoice.contact.name %></p>
+      <p><%= @invoice.date.strftime("%B %d, %Y") %></p>
+    </div>
+  </div>
+
+  <div class="px-8 pb-8">
+    <table class="w-full text-left border-collapse">
+      <thead>
+        <tr class="bg-gray-50 text-gray-600 uppercase text-xs font-bold">
+          <th class="p-4 border-b">Item Description</th>
+          <th class="p-4 border-b text-center">Qty</th>
+          <th class="p-4 border-b text-right">Unit Price</th>
+          <th class="p-4 border-b text-right">Subtotal</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @invoice.invoice_items.each do |line| %>
+          <tr class="border-b hover:bg-gray-50 transition">
+            <td class="p-4 font-medium text-gray-800"><%= line.item.name %></td>
+            <td class="p-4 text-center text-gray-600"><%= line.quantity %></td>
+            <td class="p-4 text-right text-gray-600"><%= number_to_currency(line.unit_price) %></td>
+            <td class="p-4 text-right font-semibold text-gray-900"><%= number_to_currency(line.quantity * line.unit_price) %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+    <div class="mt-8 flex justify-between items-center">
+      <div class="text-sm">
+        <% if @invoice.journal_entry %>
+          
+        <% end %>
+      </div>
+      <div class="text-right">
+        <p class="text-gray-500 uppercase text-xs font-bold">Total Amount Receive</p>
+        <p class="text-4xl font-black text-blue-600"><%= number_to_currency(@invoice.total_amount) %></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="max-w-4xl mx-auto mt-6 flex justify-between items-center">
+  <%= link_to "← Back to Invoices", invoices_path, class: "text-gray-500 hover:text-gray-700 font-medium" %>
+  <div class="flex space-x-3">
+    <% if @invoice.status == 'Draft' %>
+      <%= link_to "Edit Invoice", edit_invoice_path(@invoice), class: "bg-gray-800 text-white px-6 py-2 rounded-lg hover:bg-gray-900" %>
+    <% else %>
+      <div class="bg-yellow-50 border border-yellow-200 text-yellow-700 px-4 py-2 rounded-lg text-sm">
+        Invoice is Locked (Posted)
+      </div>
+    <% end %>
+  </div>
+</div>

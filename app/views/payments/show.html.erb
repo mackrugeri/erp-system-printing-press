@@ -1,0 +1,65 @@
+<%# app/views/payments/show.html.erb %>
+<div class="max-w-3xl mx-auto py-12 px-4">
+  <div class="mb-8 print:hidden">
+    <%= link_to payments_path, class: "text-xs font-black text-slate-400 uppercase tracking-widest hover:text-slate-900" do %>
+      ← Back to History
+    <% end %>
+  </div>
+
+  <div class="bg-white border border-slate-200 rounded-[3rem] shadow-2xl overflow-hidden relative">
+    <%# Watermark for status %>
+    <div class="absolute top-10 right-10 opacity-10 rotate-12 pointer-events-none">
+      <p class="text-8xl font-black uppercase">PAID</p>
+    </div>
+
+    <div class="p-12 border-b border-slate-100 flex justify-between items-start">
+      <div>
+        <h2 class="text-4xl font-black italic uppercase tracking-tighter text-slate-900">Payment Receipt</h2>
+        <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mt-1">Ref: <%= @payment.journal_entry&.reference %></p>
+      </div>
+      <div class="text-right">
+        <p class="text-xs font-black text-slate-400 uppercase">Date</p>
+        <p class="font-bold text-slate-900"><%= @payment.payment_date.strftime("%B %d, %Y") %></p>
+      </div>
+    </div>
+
+    <div class="p-12 grid grid-cols-2 gap-12">
+      <div>
+        <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Paid By / To</h3>
+        <p class="text-2xl font-black text-slate-900"><%= @payment.contact.name %></p>
+        <p class="text-slate-500 font-medium"><%= @payment.contact.contact_type %> Account</p>
+      </div>
+      
+      <div class="bg-slate-50 p-8 rounded-3xl">
+        <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Total Amount</h3>
+        <p class="text-4xl font-black text-blue-600 font-mono"><%= number_to_currency(@payment.amount) %></p>
+      </div>
+    </div>
+
+    <div class="px-12 pb-12">
+      <div class="bg-white border border-slate-100 rounded-2xl p-6 space-y-4">
+        <div class="flex justify-between text-sm">
+          <span class="text-slate-400 font-bold uppercase tracking-tighter">Payment Method</span>
+          <span class="font-bold text-slate-900"><%= @payment.payment_method %></span>
+        </div>
+        <div class="flex justify-between text-sm border-t pt-4">
+          <span class="text-slate-400 font-bold uppercase tracking-tighter">Account Credited/Debited</span>
+          <span class="font-bold text-slate-900"><%= @payment.account.name %></span>
+        </div>
+        <% if @payment.note.present? %>
+          <div class="border-t pt-4">
+            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Memo / Notes</span>
+            <p class="text-sm text-slate-600 italic">"<%= @payment.note %>"</p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="p-12 bg-slate-50 flex justify-between items-center print:hidden">
+      <p class="text-[10px] text-slate-400 font-medium">Generating this receipt creates a Journal Entry in the General Ledger.</p>
+      <button onclick="window.print()" class="bg-slate-900 text-white px-8 py-3 rounded-2xl font-bold uppercase text-xs tracking-widest hover:scale-105 transition-all">
+        Download / Print
+      </button>
+    </div>
+  </div>
+</div>

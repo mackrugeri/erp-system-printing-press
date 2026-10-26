@@ -1,0 +1,73 @@
+<div class="max-w-4xl mx-auto bg-white shadow-xl rounded-xl overflow-hidden mt-10">
+  <%# Top Branding Accent - Matches Invoice exactly %>
+  <div class="p-1 bg-gradient-to-r from-blue-600 to-indigo-600"></div>
+
+  <%# Header Section %>
+  <div class="p-8 flex justify-between items-start">
+    <div>
+      <h1 class="text-3xl font-extrabold text-gray-900 uppercase tracking-tighter italic">PURCHASE BILL</h1>
+      <p class="text-lg text-gray-500">No: <%= @purchase_bill.bill_number %></p>
+      
+      <div class="mt-4">
+        <span class="px-3 py-1 text-xs font-bold uppercase rounded-full 
+          <%= @purchase_bill.status == 'Posted' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600' %>">
+          <%= @purchase_bill.status %>
+        </span>
+      </div>
+    </div>
+    
+    <div class="text-right text-gray-600">
+      <p class="font-bold text-gray-900 text-lg"><%= @purchase_bill.contact.name %></p>
+      <p><%= @purchase_bill.date.strftime("%B %d, %Y") %></p>
+    </div>
+  </div>
+
+  <%# Line Items Table %>
+  <div class="px-8 pb-8">
+    <table class="w-full text-left border-collapse">
+      <thead>
+        <tr class="bg-gray-50 text-gray-600 uppercase text-xs font-bold">
+          <th class="p-4 border-b">Item Description</th>
+          <th class="p-4 border-b text-center">Qty</th>
+          <th class="p-4 border-b text-right">Unit Price</th>
+          <th class="p-4 border-b text-right">Subtotal</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @purchase_bill.purchase_bill_items.each do |line| %>
+          <tr class="border-b hover:bg-gray-50 transition">
+            <td class="p-4 font-medium text-gray-800"><%= line.item.name %></td>
+            <td class="p-4 text-center text-gray-600"><%= line.quantity %></td>
+            <td class="p-4 text-right text-gray-600"><%= number_to_currency(line.unit_price, unit: "Rs. ") %></td>
+            <td class="p-4 text-right font-semibold text-gray-900"><%= number_to_currency(line.quantity * line.unit_price, unit: "Rs. ") %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+    <%# Summary Section %>
+    <div class="mt-8 flex justify-between items-center">
+      <div class="text-sm">
+      </div>
+      <div class="text-right">
+        <p class="text-gray-500 uppercase text-xs font-bold tracking-widest">Total Amount Payable</p>
+        <p class="text-4xl font-black text-blue-600 tracking-tighter"><%= number_to_currency(@purchase_bill.total_amount, unit: "Rs. ") %></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%# Action Buttons Container - Same as Invoice %>
+<div class="max-w-4xl mx-auto mt-6 flex justify-between items-center px-2">
+  <%= link_to "← Back to Bills", purchase_bills_path, class: "text-gray-500 hover:text-gray-700 font-medium text-sm" %>
+  
+  <div class="flex space-x-3 items-center">
+    <% if @purchase_bill.status == 'Posted' %>
+      <div class="bg-yellow-50 border border-yellow-200 text-yellow-700 px-4 py-2 rounded-lg text-sm">
+        Bill is Locked (Posted)
+      </div>
+    <% else %>
+      <%= link_to "Edit Bill", edit_purchase_bill_path(@purchase_bill), class: "bg-gray-800 text-white px-8 py-2.5 rounded-xl hover:bg-gray-900 font-bold text-sm shadow-lg transition-all" %>
+    <% end %>
+  </div>
+</div>

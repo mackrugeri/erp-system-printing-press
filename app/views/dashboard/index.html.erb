@@ -1,0 +1,112 @@
+<div class="max-w-[1400px] mx-auto px-4 py-10">
+  
+  <%# Header Section %>
+  <div class="flex flex-col md:flex-row justify-between items-end mb-10 gap-4">
+    <div>
+      <h1 class="text-5xl font-black text-slate-900 tracking-tighter uppercase italic text-shadow-sm">Executive Overview</h1>
+      <p class="text-slate-500 font-medium tracking-wide flex items-center gap-2 mt-2">
+        <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+        Live Performance: <%= Date.today.strftime("%B %d, %Y") %>
+      </p>
+    </div>
+    <div class="flex gap-3">
+      <%= link_to new_invoice_path, class: "bg-slate-900 text-white px-6 py-4 rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-black transition-all shadow-xl shadow-slate-200" do %>
+        Create Invoice
+      <% end %>
+    </div>
+  </div>
+
+  <%# Primary Financial Grid %>
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-10">
+    <div class="bg-white p-7 rounded-[2.5rem] shadow-sm border border-slate-100 hover:border-blue-500 transition-all group">
+      <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Cash Position</p>
+      <p class="text-3xl font-black text-blue-600 font-mono tracking-tighter"><%= number_to_currency(@cash_on_hand) %></p>
+    </div>
+    
+    <div class="bg-white p-7 rounded-[2.5rem] shadow-sm border border-slate-100">
+      <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Total Receivable Amount</p>
+      <p class="text-3xl font-black text-blue-600 font-mono tracking-tighter"><%= number_to_currency(@total_asset_balance) %></p>
+    </div>
+
+    <div class="bg-white p-7 rounded-[2.5rem] shadow-sm border border-slate-100">
+      <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Toal Payable Account</p>
+      <p class="text-3xl font-black text-blue-600 font-mono tracking-tighter"><%= number_to_currency(@total_payables) %></p>
+    </div>
+
+    <div class="bg-white p-7 rounded-[2.5rem] shadow-sm border border-slate-100">
+      <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Toal Capital</p>
+      <p class="text-3xl font-black text-blue-600 font-mono tracking-tighter"><%= number_to_currency(@total_asset_balance -@total_payables) %></p>
+    </div>
+
+    <div class="bg-white p-7 rounded-[2.5rem] shadow-sm border border-slate-100">
+      <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Gross Profit</p>
+      <p class="text-3xl font-black text-blue-600 font-mono tracking-tighter"><%= number_to_currency(@gross_profit) %></p>
+    </div>
+  </div>
+
+
+  <%# Operational Grid %>
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+    
+    <%# Recent Sales %>
+    <div class="lg:col-span-2 bg-white rounded-[3rem] shadow-sm border border-slate-100 overflow-hidden">
+      <div class="px-10 py-8 border-b border-slate-100 flex justify-between items-center">
+        <h3 class="font-black text-slate-800 uppercase text-xs tracking-widest">Recent Orders</h3>
+        <%= link_to 'All Invoices', invoices_path, class: "text-[10px] font-black text-blue-600 uppercase hover:underline" %>
+      </div>
+      <table class="w-full text-left">
+        <tbody class="divide-y divide-slate-50">
+          <% @recent_invoices.each do |invoice| %>
+            <tr class="hover:bg-slate-50/80 transition-colors">
+              <td class="px-10 py-6">
+                <span class="block text-sm font-black text-slate-900"><%= invoice.invoice_number %></span>
+                <span class="text-[10px] text-slate-400 font-bold uppercase"><%= invoice.date.strftime("%d %b %Y") %></span>
+              </td>
+              <td class="px-10 py-6 text-sm text-slate-600 font-bold italic">
+                <%= invoice.contact.name %>
+              </td>
+              <td class="px-10 py-6 text-right font-mono font-black text-slate-900 text-lg">
+                <%= number_to_currency(invoice.total_amount) %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <%# Inventory Sidebars %>
+    <div class="space-y-8">
+      <div class="bg-white rounded-[3rem] shadow-sm border border-slate-100 p-10">
+        <h3 class="font-black text-red-600 uppercase text-xs tracking-widest mb-8">Stock Alerts</h3>
+        <div class="space-y-4">
+          <% @low_stock_items.each do |item| %>
+            <div class="flex justify-between items-center p-4 bg-red-50 rounded-3xl border border-red-100">
+              <span class="font-black text-slate-700 text-[11px] uppercase tracking-tighter"><%= item.name %></span>
+              <span class="px-4 py-1.5 bg-white text-red-600 rounded-full text-[10px] font-black shadow-sm border border-red-100">
+                <%= item.total_stock %> UNITS
+              </span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="bg-slate-900 rounded-[3rem] shadow-sm p-10 text-white">
+        <h3 class="font-black text-blue-400 uppercase text-[10px] tracking-widest mb-8">Warehouse Load</h3>
+        <div class="space-y-6">
+          <% Warehouse.all.limit(3).each do |wh| %>
+            <div class="space-y-2">
+              <div class="flex justify-between items-center">
+                <p class="text-[10px] uppercase font-black text-slate-400 tracking-wider"><%= wh.name %></p>
+                <p class="text-sm font-black font-mono"><%= wh.total_stock_count %></p>
+              </div>
+              <div class="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
+                <div class="bg-blue-500 h-full w-2/3"></div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

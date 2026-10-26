@@ -1,0 +1,22 @@
+<div class="max-w-3xl mx-auto px-4 py-12">
+  <div class="flex items-center justify-between mb-8">
+    <div>
+      <h1 class="text-3xl font-black text-slate-900 italic uppercase">Edit Profile</h1>
+      <p class="text-slate-500">Updating information for <span class="text-blue-600 font-bold"><%= @contact.name %></span></p>
+    </div>
+    <%= link_to "Back to List", contacts_path, class: "text-slate-400 hover:text-slate-600 text-sm" %>
+  </div>
+
+  <div class="bg-amber-50 border-l-4 border-amber-400 p-4 mb-8 flex gap-3">
+    <span class="text-amber-500">ℹ️</span>
+    <p class="text-xs text-amber-800">
+      <strong>Accounting Sync:</strong> Changing the name here will also update the account name in your financial reports and ledger to maintain consistency.
+    </p>
+  </div>
+
+  <div class="bg-white border border-slate-200 shadow-xl rounded-2xl overflow-hidden">
+    <div class="p-8">
+      <%= render "form", contact: @contact %>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,73 @@
+<div class="max-w-5xl mx-auto py-10 px-4">
+  <div class="flex justify-between items-end mb-8">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">Trial Balance</h1>
+      <p class="text-gray-500 font-mono">As of <%= @date.strftime("%B %d, %Y") %></p>
+    </div>
+    <div class="flex space-x-3">
+      <%= link_to trial_balance_reports_path(format: :csv, date: @date), class: "inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition" do %>
+        <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+        Download CSV
+      <% end %>
+    </div>
+  </div>
+
+  <%# Date Selector Form - Matches Balance Sheet Design %>
+  <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 mb-8">
+    <%= form_with url: trial_balance_reports_path, method: :get, class: "flex items-end space-x-4", local: true do |f| %>
+      <div>
+        <%= f.label :date, "Report Date", class: "block text-xs font-bold text-gray-500 uppercase mb-1" %>
+        <%= f.date_field :date, value: @date, class: "rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+      </div>
+      <%= f.submit "Update Report", class: "bg-gray-800 text-white px-6 py-2 rounded-lg text-sm font-bold hover:bg-black transition cursor-pointer" %>
+    <% end %>
+  </div>
+
+  <div class="bg-white shadow-sm border border-gray-200 rounded-xl overflow-hidden">
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-gray-50">
+        <tr>
+          <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-widest">Account Name</th>
+          <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-widest">Type</th>
+          <th class="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-widest w-40">Debit</th>
+          <th class="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-widest w-40">Credit</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        <% @accounts.each do |account| %>
+          <%# Logic: Calculate balance up to the selected filter date %>
+          <% balance = account.balance_for_range(Date.new(1900), @date) %>
+          <% next if balance == 0 %>
+          
+          <tr class="hover:bg-gray-50">
+            <td class="px-6 py-4 text-sm font-medium text-gray-900"><%= account.name %></td>
+            <td class="px-6 py-4 text-xs text-gray-500 uppercase"><%= account.account_type %></td>
+            
+            <td class="px-6 py-4 text-right font-mono text-sm">
+              <%= number_to_currency(balance) if account.debit_normal? %>
+            </td>
+            <td class="px-6 py-4 text-right font-mono text-sm">
+              <%= number_to_currency(balance) unless account.debit_normal? %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+      <tfoot class="bg-slate-900 text-white">
+        <tr>
+          <td colspan="2" class="px-6 py-6 text-sm font-bold uppercase tracking-widest">Total Trial Balance</td>
+          <td class="px-6 py-6 text-right font-mono font-bold text-lg border-r border-slate-700">
+            <%= number_to_currency(@total_debits) %>
+          </td>
+          <td class="px-6 py-6 text-right font-mono font-bold text-lg">
+            <%= number_to_currency(@total_credits) %>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <%# Status Indicator %>
+  <div class="mt-6 p-4 rounded-xl text-center font-bold <%= @total_debits == @total_credits ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
+    <%= @total_debits == @total_credits ? "✓ Ledger is perfectly balanced" : "✗ Ledger is out of balance by #{number_to_currency((@total_debits - @total_credits).abs)}" %>
+  </div>
+</div>

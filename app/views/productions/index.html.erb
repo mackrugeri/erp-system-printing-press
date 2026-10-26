@@ -1,0 +1,60 @@
+<div class="max-w-6xl mx-auto py-10 px-4">
+  <div class="flex justify-between items-center mb-8">
+    <div>
+      <h1 class="text-3xl font-black text-slate-900 tracking-tighter uppercase italic">Production Logs</h1>
+      <p class="text-slate-500 font-medium">History of all manufactured finished goods.</p>
+    </div>
+    <%= link_to new_production_path, class: "bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-blue-200 transition-all flex items-center gap-2" do %>
+      <span>+</span> New Production Run
+    <% end %>
+  </div>
+
+  <div class="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden">
+    <table class="w-full text-left border-collapse">
+      <thead>
+        <tr class="bg-slate-50 border-b border-slate-200">
+          <th class="p-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Timestamp</th>
+          <th class="p-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Finished Product</th>
+          <th class="p-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Output Qty</th>
+          <th class="p-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Warehouse</th>
+          <th class="p-5 text-right"></th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100">
+        <% @productions.each do |prod| %>
+          <tr class="hover:bg-slate-50/50 transition-colors group">
+            <td class="p-5">
+              <span class="text-sm font-bold text-slate-700"><%= prod.created_at.strftime("%b %d, %Y") %></span>
+              <p class="text-[10px] text-slate-400 font-mono"><%= prod.created_at.strftime("%H:%M") %></p>
+            </td>
+            <td class="p-5">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center text-xs">📦</div>
+                <div>
+                  <p class="font-black text-slate-900 leading-none mb-1"><%= prod.item.name %></p>
+                  <p class="text-xs text-slate-400 font-mono"><%= prod.item.sku %></p>
+                </div>
+              </div>
+            </td>
+            <td class="p-5 text-center">
+              <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full font-black text-xs">
+                +<%= number_with_precision(prod.quantity, precision: 2) %>
+              </span>
+            </td>
+            <td class="p-5">
+              <span class="text-sm font-semibold text-slate-600"><%= prod.warehouse.name %></span>
+            </td>
+            <td class="p-5 text-right">
+              <%= link_to production_path(prod), class: "inline-flex items-center justify-center w-10 h-10 rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-900 hover:text-white transition-all" do %>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                  <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                </svg>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

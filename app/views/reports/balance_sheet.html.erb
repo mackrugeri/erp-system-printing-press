@@ -1,0 +1,90 @@
+<div class="max-w-6xl mx-auto py-10 px-4">
+  <div class="flex justify-between items-end mb-8">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">Balance Sheet</h1>
+      <p class="text-gray-500 font-mono">Period: <%= @start_date.strftime("%B %d, %Y") %> — <%= @end_date.strftime("%B %d, %Y") %></p>
+    </div>
+    <div class="flex space-x-3">
+      <%= link_to balance_sheet_reports_path(format: :csv, start_date: @start_date, end_date: @end_date), class: "inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition" do %>
+        <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+        Download CSV
+      <% end %>
+    </div>
+  </div>
+
+  <%# Date Selector Form %>
+  <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 mb-8">
+    <%= form_with url: balance_sheet_reports_path, method: :get, class: "flex items-end space-x-4", local: true do |f| %>
+      <div>
+        <%= f.label :start_date, "Statement Date", class: "block text-xs font-bold text-gray-500 uppercase mb-1" %>
+        <%= f.date_field :start_date, value: @start_date, class: "rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+      </div>
+
+      <div>
+        <%= f.label :end_date, "Statement Date", class: "block text-xs font-bold text-gray-500 uppercase mb-1" %>
+        <%= f.date_field :end_date, value: @end_date, class: "rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+      </div>
+
+      <%= f.submit "Update Report", class: "bg-gray-800 text-white px-6 py-2 rounded-lg text-sm font-bold hover:bg-black transition cursor-pointer" %>
+    <% end %>
+  </div>
+
+  <div class="mb-4 grid grid-cols-1 md:grid-cols-2 gap-8">
+    <div class="bg-white shadow border border-gray-200 rounded-xl overflow-hidden">
+      <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
+        <h2 class="text-lg font-bold text-gray-800 uppercase tracking-widest">Assets</h2>
+      </div>
+      <div class="p-6">
+        <% @assets.each do |account| %>
+          <div class="flex justify-between py-3 border-b border-gray-50">
+            <span class="text-gray-600 font-medium"><%= account.name %></span>
+            <span class="font-mono text-gray-900"><%= number_to_currency(account.balance_for_range(@start_date, @end_date)) %></span>
+          </div>
+        <% end %>
+        <div class="flex justify-between pt-6 mt-4 border-t-2 border-gray-900 font-bold text-2xl text-blue-900">
+          <span>Total Assets</span>
+          <span><%= number_to_currency(@total_assets) %></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="space-y-8">
+      <div class="bg-white shadow border border-gray-200 rounded-xl overflow-hidden">
+        <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
+          <h2 class="text-lg font-bold text-gray-800 uppercase tracking-widest">Liabilities & Equity</h2>
+        </div>
+        <div class="p-6">
+          <h3 class="text-xs font-bold text-gray-400 uppercase mb-4 tracking-tighter">Current Liabilities</h3>
+          <% @liabilities.each do |account| %>
+            <div class="flex justify-between py-2 border-b border-gray-50">
+              <span class="text-gray-600"><%= account.name %></span>
+              <span class="font-mono"><%= number_to_currency(account.balance_for_range(@start_date, @end_date)) %></span>
+            </div>
+          <% end %>
+
+          <h3 class="text-xs font-bold text-gray-400 uppercase mt-8 mb-4 tracking-tighter">Equity</h3>
+          <% @equity.each do |account| %>
+            <div class="flex justify-between py-2 border-b border-gray-50">
+              <span class="text-gray-600"><%= account.name %></span>
+              <span class="font-mono"><%= number_to_currency(account.balance_for_range(@start_date, @end_date)) %></span>
+            </div>
+          <% end %>
+          <div class="flex justify-between py-3 text-green-700 italic bg-green-50 px-2 rounded mt-2">
+            <span>Retained Earnings (Accumulated Profit)</span>
+            <span class="font-mono font-bold"><%= number_to_currency(@retained_earnings) %></span>
+          </div>
+
+          <div class="flex justify-between pt-6 mt-4 border-t-2 border-gray-900 font-bold text-2xl text-slate-900">
+            <span>Total Liabilities & Equity</span>
+            <span><%= number_to_currency(@total_liabilities_equity) %></span>
+          </div>
+        </div>
+      </div>
+
+      <%# Simple Balancing Check %>
+    </div>
+  </div>
+    <div class=" p-4 rounded-xl text-center font-bold <%= @total_assets == @total_liabilities_equity ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
+      <%= @total_assets == @total_liabilities_equity ? "✓ Balance Sheet is Balanced" : "Out of Balance by #{number_to_currency(@total_assets - @total_liabilities_equity)}" %>
+    </div>
+</div>

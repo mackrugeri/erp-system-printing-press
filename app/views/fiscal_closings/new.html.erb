@@ -1,0 +1,32 @@
+<%# app/views/fiscal_closings/new.html.erb %>
+<div class="max-w-2xl mx-auto py-16 px-4">
+  <div class="bg-white border border-slate-200 rounded-[3rem] shadow-2xl overflow-hidden">
+    <div class="p-10 bg-red-600 text-white">
+      <h1 class="text-3xl font-black italic uppercase tracking-tighter">Close Fiscal Year</h1>
+      <p class="text-red-100 text-xs font-bold uppercase tracking-widest mt-1">Warning: This action resets Income & Expenses to $0.00</p>
+    </div>
+
+    <%= form_with url: fiscal_closings_path, local: true, class: "p-10 space-y-8" do |f| %>
+      <div>
+        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Closing Date</label>
+        <%= f.date_field :closing_date, value: @closing_date, class: "w-full rounded-2xl border-slate-200 py-4 px-6 font-bold" %>
+      </div>
+
+      <div>
+        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Reference / Batch Name</label>
+        <%= f.text_field :reference, placeholder: "FY-2025-FINAL", class: "w-full rounded-2xl border-slate-200 py-4 px-6 font-bold" %>
+      </div>
+
+      <div class="bg-amber-50 p-6 rounded-2xl border border-amber-100">
+        <p class="text-xs text-amber-800 font-medium">
+          <strong>Note:</strong> This will create a balanced journal entry that moves all current year profits into your Equity account. Ensure all Invoices and Bills for the year are posted before continuing.
+        </p>
+      </div>
+
+      <div class="flex items-center justify-between pt-4">
+        <%= link_to "Cancel", root_path, class: "text-xs font-black text-slate-400 uppercase" %>
+        <%= f.submit "Perform Year-End Closing", class: "bg-red-600 text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest hover:bg-red-700 shadow-xl shadow-red-200 cursor-pointer" %>
+      </div>
+    <% end %>
+  </div>
+</div>

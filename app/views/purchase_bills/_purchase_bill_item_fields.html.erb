@@ -1,0 +1,18 @@
+<tr class="nested-fields group" data-new-record="<%= f.object.new_record? %>">
+  <td class="py-4">
+    <%= f.collection_select :item_id, Item.all, :id, :name, { prompt: "Select Item" }, 
+        class: "w-full border-transparent bg-transparent font-bold text-slate-700 focus:ring-blue-500" %>
+  </td>
+  <td class="py-4">
+    <%= f.number_field :quantity, data: { action: "input->invoice-total#calculate", invoice_total_target: "quantity" },
+        class: "w-full border-slate-100 rounded-xl text-center font-bold focus:ring-blue-500" %>
+  </td>
+  <td class="py-4">
+    <%= f.number_field :unit_price, step: 0.01, data: { action: "input->invoice-total#calculate", invoice_total_target: "price" },
+        class: "w-full border-slate-100 rounded-xl text-right font-mono font-bold focus:ring-blue-500" %>
+  </td>
+  <td class="py-4 text-center">
+    <%= f.hidden_field :_destroy %>
+    <button type="button" data-action="click->invoice-total#removeRow" class="text-red-300 hover:text-red-600 text-xl transition-colors">&times;</button>
+  </td>
+</tr>

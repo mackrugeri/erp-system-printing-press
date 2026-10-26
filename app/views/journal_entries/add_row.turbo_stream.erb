@@ -1,0 +1,6 @@
+<%# We use the child_index option to ensure each new row has a unique key in the params hash %>
+<%= turbo_stream.append "ledger-lines" do %>
+  <%= fields_for "journal_entry[ledger_entries_attributes]", @new_line, child_index: Time.now.to_i do |f| %>
+    <%= render "ledger_entry_fields", f: f %>
+  <% end %>
+<% end %>

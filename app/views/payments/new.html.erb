@@ -1,0 +1,71 @@
+<%# app/views/payments/new.html.erb %>
+<div class="max-w-2xl mx-auto py-12 px-4">
+  <div class="mb-8">
+    <%= link_to :back, class: "text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-slate-900" do %>
+      ← Back
+    <% end %>
+  </div>
+
+  <div class="bg-white shadow-2xl rounded-[3rem] border border-slate-200 overflow-hidden">
+    <div class="p-10 bg-slate-900 text-white">
+      <div class="flex justify-between items-center">
+        <div>
+          <h1 class="text-3xl font-black italic uppercase tracking-tighter">Record Payment</h1>
+          <p class="text-blue-400 text-[10px] font-black uppercase tracking-widest mt-1">Financial Settlement</p>
+        </div>
+        <span class="text-5xl">💸</span>
+      </div>
+    </div>
+
+    <%= form_with(model: @payment, local: true) do |f| %>
+      <div class="p-10 space-y-8">
+        <% if @payment.errors.any? %>
+          <div class="p-4 bg-red-50 border-l-4 border-red-500 text-red-700 text-xs font-bold rounded-r-xl">
+            <%= @payment.errors.full_messages.to_sentence %>
+          </div>
+        <% end %>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div>
+            <%= f.label :contact_id, "Select Party (Customer/Vendor)", class: "block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1" %>
+            <%= f.collection_select :contact_id, @contacts, :id, :name, { prompt: "Select a Contact" }, class: "w-full rounded-2xl border-slate-200 py-4 px-5 font-bold text-slate-700 focus:ring-4 focus:ring-blue-500/10" %>
+          </div>
+          <div>
+            <%= f.label :account_id, "Payment Account (Cash/Bank)", class: "block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1" %>
+            <%= f.collection_select :account_id, @cash_accounts, :id, :name, { prompt: "Select Account" }, class: "w-full rounded-2xl border-slate-200 py-4 px-5 font-bold text-slate-700 focus:ring-4 focus:ring-blue-500/10" %>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div>
+            <%= f.label :amount, "Payment Amount", class: "block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1" %>
+            <div class="relative">
+              <span class="absolute left-5 top-4 font-bold text-slate-400">$</span>
+              <%= f.number_field :amount, step: :any, class: "w-full rounded-2xl border-slate-200 py-4 pl-10 pr-5 font-mono font-bold text-xl text-slate-900 focus:ring-4 focus:ring-green-500/10", placeholder: "0.00" %>
+            </div>
+          </div>
+          <div>
+            <%= f.label :payment_date, "Transaction Date", class: "block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1" %>
+            <%= f.date_field :payment_date, class: "w-full rounded-2xl border-slate-200 py-4 px-5 font-bold text-slate-700" %>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div>
+            <%= f.label :payment_method, "Method", class: "block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1" %>
+            <%= f.select :payment_method, ['Cash', 'Bank Transfer', 'Cheque', 'Mobile Money'], {}, class: "w-full rounded-2xl border-slate-200 py-4 px-5 font-bold text-slate-700" %>
+          </div>
+          <div>
+            <%= f.label :note, "Reference / Notes", class: "block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1" %>
+            <%= f.text_field :note, class: "w-full rounded-2xl border-slate-200 py-4 px-5 font-medium text-slate-600", placeholder: "e.g. Inv #102 settlement" %>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-10 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+        <%= link_to "Discard", contacts_path, class: "text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-red-500 transition-colors" %>
+        <%= f.submit "Post Payment to Ledger", class: "bg-blue-600 hover:bg-blue-700 text-white px-10 py-4 rounded-2xl font-black uppercase tracking-tighter shadow-xl shadow-blue-200 transform active:scale-95 transition-all cursor-pointer" %>
+      </div>
+    <% end %>
+  </div>
+</div>

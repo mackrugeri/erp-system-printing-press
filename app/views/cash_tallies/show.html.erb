@@ -1,0 +1,46 @@
+<%# app/views/cash_tallies/show.html.erb %>
+<div class="max-w-3xl mx-auto py-12 px-4">
+  <div class="mb-8">
+    <%= link_to cash_tallies_path, class: "text-xs font-bold text-slate-400 uppercase tracking-widest hover:text-slate-900" do %>
+      ← Back to History
+    <% end %>
+  </div>
+
+  <div class="bg-white border border-slate-200 rounded-[2.5rem] shadow-xl overflow-hidden">
+    <div class="p-10 bg-slate-900 text-white flex justify-between items-center">
+      <div>
+        <p class="text-blue-400 text-[10px] font-black uppercase tracking-widest mb-1">Tally Report</p>
+        <h1 class="text-3xl font-black italic uppercase italic tracking-tighter">Verified: <%= @tally.created_at.strftime("%d %b %Y") %></h1>
+      </div>
+      <div class="text-right">
+        <p class="text-[10px] text-slate-400 font-bold uppercase mb-1">Difference</p>
+        <p class="text-3xl font-black <%= @tally.difference >= 0 ? 'text-green-400' : 'text-red-400' %>">
+          <%= number_to_currency(@tally.difference) %>
+        </p>
+      </div>
+    </div>
+
+    <div class="p-10 grid grid-cols-2 gap-10">
+      <div>
+        <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Verification Details</h3>
+        <div class="space-y-4">
+          <div class="flex justify-between border-b pb-2">
+            <span class="text-slate-500 text-sm font-medium">System Ledger</span>
+            <span class="font-bold text-slate-900"><%= number_to_currency(@tally.system_amount) %></span>
+          </div>
+          <div class="flex justify-between border-b pb-2">
+            <span class="text-slate-500 text-sm font-medium">Physical Count</span>
+            <span class="font-bold text-slate-900"><%= number_to_currency(@tally.physical_amount) %></span>
+          </div>
+        </div>
+      </div>
+      
+      <div>
+        <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Notes</h3>
+        <p class="text-sm text-slate-600 italic bg-slate-50 p-4 rounded-2xl border border-slate-100">
+          "<%= @tally.note.presence || 'No notes provided for this closing.' %>"
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

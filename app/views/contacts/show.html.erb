@@ -1,0 +1,130 @@
+<%# app/views/contacts/show.html.erb %>
+<div class="max-w-6xl mx-auto px-4 py-10">
+  
+  <%# Navigation and Header %>
+  <div class="mb-6">
+    <%= link_to contacts_path, class: "text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-blue-600 transition-colors" do %>
+      ← Back to Contacts
+    <% end %>
+     <%= link_to new_payment_path(contact_id: @contact.id), class: "bg-green-600 text-white px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-green-700 shadow-lg shadow-green-200 transition-all" do %>
+        Receive/Make Payment
+      <% end %>
+  </div>
+
+ 
+
+  <div class="flex flex-col md:flex-row justify-between items-start gap-6 mb-10">
+    <div>
+      <h1 class="text-5xl font-black text-slate-900 tracking-tighter uppercase italic"><%= @contact.name %></h1>
+      <div class="flex items-center gap-3 mt-2">
+        <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">
+          <%= @contact.contact_type %>
+        </span>
+        <p class="text-slate-500 font-medium tracking-wide"><%= @contact.email %></p>
+      </div>
+    </div>
+
+    <%# Current Balance Card %>
+    <div class="bg-slate-900 px-8 py-6 rounded-[2.5rem] shadow-2xl text-right text-white border-b-4 border-blue-600">
+      <p class="text-[10px] font-bold text-blue-400 uppercase tracking-widest mb-1">Total Outstanding</p>
+      <p class="text-4xl font-black font-mono">
+        <%= number_to_currency(@contact.account.balance) %>
+      </p>
+    </div>
+  </div>
+
+  <%# FILTER TOOLBAR (Non-printable) %>
+  <div class="print:hidden mb-8 bg-white border border-slate-200 p-4 rounded-3xl shadow-sm flex flex-wrap items-center justify-between gap-4">
+    <%= form_with url: contact_path(@contact), method: :get, class: "flex items-center gap-6" do |f| %>
+      <div class="flex items-center gap-3">
+        <div class="flex flex-col">
+          <%= f.label :start_date, "From Date", class: "text-[9px] font-black uppercase text-slate-400 mb-1 ml-1" %>
+          <%= f.date_field :start_date, value: @start_date, class: "rounded-xl border-slate-200 text-xs font-bold p-2.5 focus:ring-blue-500 focus:border-blue-500" %>
+        </div>
+        <div class="flex flex-col">
+          <%= f.label :end_date, "To Date", class: "text-[9px] font-black uppercase text-slate-400 mb-1 ml-1" %>
+          <%= f.date_field :end_date, value: @end_date, class: "rounded-xl border-slate-200 text-xs font-bold p-2.5 focus:ring-blue-500 focus:border-blue-500" %>
+        </div>
+      </div>
+      
+      <div class="flex gap-3">
+        <%= f.submit "Update Report", class: "bg-blue-600 text-white px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-blue-700 transition-all cursor-pointer shadow-lg shadow-blue-200 active:scale-95" %>
+        <%= link_to "Reset", contact_path(@contact), class: "bg-slate-800 text-white px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-black transition-all" %>
+      </div>
+    <% end %>
+  </div>
+
+  <%# TRANSACTION TABLE %>
+  <div class="bg-white border border-slate-200 rounded-[2.5rem] shadow-sm overflow-hidden mb-12">
+    <div class="bg-slate-50 px-8 py-6 border-b border-slate-200 flex justify-between items-center">
+      <div>
+        <h3 class="font-black text-slate-800 uppercase text-sm tracking-tighter">Account Statement</h3>
+        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+          Period: <%= @start_date.strftime("%d %b %Y") %> — <%= @end_date.strftime("%d %b %Y") %>
+        </p>
+      </div>
+    </div>
+
+    
+
+    <div class="overflow-x-auto">
+      <table class="w-full text-left">
+        <thead>
+          <tr class="bg-slate-50/50">
+            <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Date</th>
+            <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Transaction / Reference</th>
+            <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Debit (+)</th>
+            <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Credit (-)</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          <% @ledger_entries.each do |entry| %>
+            <tr class="hover:bg-slate-50/80 transition-colors group">
+              <td class="px-8 py-5 text-sm font-bold text-slate-500 whitespace-nowrap">
+                <%= entry.journal_entry.date.strftime("%d %b %Y") %>
+              </td>
+              <td class="px-8 py-5">
+                <div class="flex flex-col">
+                  <span class="font-black text-slate-900 text-sm tracking-tight group-hover:text-blue-600 transition-colors">
+                    <%= entry.journal_entry.description %>
+                  </span>
+                  <span class="text-[10px] font-mono text-slate-400 uppercase mt-0.5">
+                    Ref: <%= entry.journal_entry.reference %>
+                  </span>
+                </div>
+              </td>
+              <td class="px-8 py-5 text-right text-sm font-mono font-bold text-slate-900">
+                <%= number_to_currency(entry.debit) if entry.debit > 0 %>
+              </td>
+              <td class="px-8 py-5 text-right text-sm font-mono font-bold text-blue-600">
+                <%= "(#{number_to_currency(entry.credit)})" if entry.credit > 0 %>
+              </td>
+            </tr>
+          <% end %>
+
+          <% if @ledger_entries.empty? %>
+            <tr>
+              <td colspan="4" class="px-8 py-20 text-center">
+                <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-slate-100">
+                  <span class="text-2xl text-slate-300">📁</span>
+                </div>
+                <p class="text-slate-400 font-bold uppercase text-[10px] tracking-widest">No transactions found for this period</p>
+                <p class="text-slate-300 text-xs mt-1 font-medium">Try adjusting your date filters above.</p>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<style type="text/css" media="print">
+  @page { size: auto; margin: 20mm; }
+  body { background-color: white !important; }
+  .print\:hidden { display: none !important; }
+  .shadow-2xl, .shadow-sm { box-shadow: none !important; }
+  .rounded-\[2\.5rem\] { border-radius: 0 !important; }
+  .bg-slate-900 { background-color: white !important; color: black !important; border: 1px solid #e2e8f0 !important; }
+  .text-blue-400 { color: #64748b !important; }
+</style>
